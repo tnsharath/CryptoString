@@ -14,20 +14,30 @@ import com.mobiotics.cryptostring.R;
 import com.mobiotics.cryptostring.utils.AppConstants;
 import com.mobiotics.cryptostring.viewmodel.CryptoViewModel;
 
+import java.util.Objects;
+
 public class EncryptDecryptActivity extends AppCompatActivity {
 
-    int functionEncDec = 0;
-    EditText editText;
-    TextView tvResult;
-    CryptoViewModel cryptoViewModel;
+    private int functionEncDec = 0;
+    private EditText editText;
+    private TextView tvResult;
+    private CryptoViewModel cryptoViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_encrypt_decrypt);
 
-        functionEncDec = getIntent().getExtras().getInt(AppConstants.ACTIVITY_FUNCTION);
+        functionEncDec = Objects.requireNonNull(getIntent().getExtras()).getInt(AppConstants.ACTIVITY_FUNCTION);
         cryptoViewModel = ViewModelProviders.of(this).get(CryptoViewModel.class);
         initializeView();
+        setResult();
+    }
+
+    /**
+     * Set the Result in textView
+     */
+    private void setResult() {
         cryptoViewModel.getResultText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
@@ -36,17 +46,25 @@ public class EncryptDecryptActivity extends AppCompatActivity {
         });
     }
 
-    private void initializeView(){
+    /**
+     * Initialize activity view
+     */
+    private void initializeView() {
         if (functionEncDec == 0) {
-            getSupportActionBar().setTitle("Encryption");
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Encryption");
         } else {
-            getSupportActionBar().setTitle("Decryption");
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Decryption");
         }
         editText = findViewById(R.id.editText);
         tvResult = findViewById(R.id.tvResult);
-       // tvResult.setText(cryptoViewModel.getResultText());
     }
 
+    /**
+     * onClick of Submit button perform encryption or decryption.
+     *
+     * @param view ButtonView
+     */
+    @SuppressWarnings("unused")
     public void submit(View view) {
         String text = editText.getText().toString();
         if (text.length() != 0) {
